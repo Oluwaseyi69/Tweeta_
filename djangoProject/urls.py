@@ -24,6 +24,6 @@ urlpatterns = [
     path('playground/', include('playground.urls', namespace='playground')),
     path("__debug__/", include("debug_toolbar.urls")),
     path('tweets/', include('tweet.url')),
-    path('comments/', include('tweet.url'))
+    # path('tweets/', include('tweet.url'))
 
 ]

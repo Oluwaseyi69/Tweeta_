@@ -1,38 +1,54 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, \
+    RetrieveUpdateDestroyAPIView, RetrieveDestroyAPIView
+from rest_framework.viewsets import ModelViewSet
 
 import tweet
 from .serializers import TweetSerializer, CommentSerializer
 from django.shortcuts import get_object_or_404
 
-from .models import Tweet
+from .models import Tweet, Comment
 
 
 # Create your views here.
 
-class TweetList(ListCreateAPIView):
-    queryset = Tweet.objects.all()
+# class TweetList(ListCreateAPIView):
+#     queryset = Tweet.objects.all()
+#     serializer_class = TweetSerializer
+#
+#
+# class TweetDetail(RetrieveUpdateDestroyAPIView):
+#     queryset = Tweet.objects.all()
+#     serializer_class = TweetSerializer
+
+
+class TweetViewSet(ModelViewSet):
+    queryset = Tweet.objects.filter()
     serializer_class = TweetSerializer
 
 
-class TweetDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Tweet.objects.all()
-    serializer_class = TweetSerializer
+# class CommentCreate(ListCreateAPIView):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentSerializer
+#
+#
+# class CommentDetail(RetrieveDestroyAPIView):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentSerializer
 
 
-class CommentList(ListCreateAPIView):
-    queryset = Tweet.objects.all()
+class CommentViewSet(ModelViewSet):
+    queryset = Comment.objects.select_related('tweet').all()
     serializer_class = CommentSerializer
 
+    def get_queryset(self):
+        return Comment.objects.select_related('tweet').filter(tweet_id=self.kwargs['tweet_pk'])
 
-class CommentDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Tweet.objects.all()
-    serializer_class = TweetSerializer
 # class TweetList(APIView):
 #     def get(self, request):
 #         tweets = Tweet.objects.all()
